@@ -1,6 +1,22 @@
 package io;
 
-import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.glfwGetMouseButton;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+
 import org.lwjgl.glfw.GLFWVidMode;
 
 public class Window {
@@ -16,33 +32,47 @@ public class Window {
 	}
 
 	public void create() {
-		if (!GLFW.glfwInit()) {
+		if (!glfwInit()) {
 			System.err.println("Error: Couldn't initialize GLFW");
 			System.exit(-1);
 		}
-		window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
+
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		
+		window = glfwCreateWindow(width, height, title, 0, 0);
 
 		if (window == 0) {
 			System.err.println("Error: Window couldn't be created");
 			System.exit(-1);
 		}
 		
-		GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-		GLFW.glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
+		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
 
-		GLFW.glfwShowWindow(window);
+		glfwMakeContextCurrent(window);
+		
+		glfwShowWindow(window);
 	}
 	
 	public boolean isClosed() {
-		return GLFW.glfwWindowShouldClose(window);
+		return glfwWindowShouldClose(window);
 	}
 	
 	public void update() {
-		GLFW.glfwPollEvents();
+		glfwPollEvents();
 	}
 	
 	public void swapBuffers() {
-		GLFW.glfwSwapBuffers(window);
+		
+		glfwSwapBuffers(window);
+	}
+	
+	public boolean isKeyDown(int keyCode) {
+		return glfwGetKey(window, keyCode) == GLFW_PRESS;
+	}
+	
+	public boolean isMouseDown(int mouseButton) {
+		return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS;
 	}
 
 }
